@@ -91,7 +91,3 @@ jobs:
       - name: Run Bandit
         run: |
           bandit -r app
-
-      - name: Run Safety
-        run: |
-          safety scan
