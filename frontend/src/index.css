@@ -1,2 +1,13 @@
-@import "tailwindcss";
+/*
+  Import Tailwind CSS v4
 
+  Tailwind automatically scans project files
+  and generates only the CSS classes that are used.
+
+  This gives:
+  - smaller bundle sizes
+  - utility-first styling
+  - fast UI development
+*/
+
+@import "tailwindcss";

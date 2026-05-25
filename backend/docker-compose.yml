@@ -1,19 +1,46 @@
+# Docker Compose config
+
+# Defines local multi-container infrastructure
+# for development 
+
 services:
+  # PostgreSQL database service 
   postgres:
+    # Docker image pulled from Docker
     image: postgres:16
+
+    # Human-readable container name 
     container_name: devsight-db
+
+    # Automatically restart container if it crashes 
     restart: always
 
+    env_file: 
+      - ./backend/.env
+      
+    # Environment variables passed into container
     environment:
-      POSTGRES_USER: devsight
-      POSTGRES_PASSWORD: devsightpassword
-      POSTGRES_DB: devsight
 
+      # Database username
+      POSTGRES_USER: ${POSTGRES_USER}
+
+      # Database password
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+
+      # Database name 
+      POSTGRES_DB: ${POSTGRES_DB}
+
+    # Port mapping: 
+    # local_machine_post: container port
     ports:
       - "5432:5432"
 
+    # persistent storage volume
     volumes:
+      # orevents database data loss
+      # when container restart
       - postgres_data:/var/lib/postgresql/data
 
+# Named docker volume definition
 volumes:
   postgres_data:
