@@ -94,4 +94,4 @@ jobs:
 
       - name: Run Safety
         run: |
-          safety scan --full-report
+          safety scan
