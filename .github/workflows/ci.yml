@@ -55,7 +55,7 @@ jobs:
           --health-retries 5
 
     env:
-      DATABASE_URL: postgresql://devsight:devsightpassword@localhost:5432/devsight
+      DATABASE_URL: postgresql://devsight:${POSTGRES_PASSWORD}@localhost:5432/devsight
 
     defaults:
       run:
