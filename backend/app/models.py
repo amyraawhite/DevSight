@@ -41,4 +41,4 @@ class User(Base):
     """
     Stores hashed password. 
     """
-    hashed_password = Column(String).
+    hashed_password = Column(String)
