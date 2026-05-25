@@ -1,62 +1,58 @@
 name: DevSight CI
 
-on: 
-  push: 
-    branches: 
-      - main
-    
-  pull_request: 
-    branches: 
+on:
+  push:
+    branches:
       - main
 
-jobs: 
-  frontend: 
+  pull_request:
+    branches:
+      - main
+
+jobs:
+
+  frontend:
     runs-on: ubuntu-latest
 
-    defaults: 
-      run: 
+    defaults:
+      run:
         working-directory: frontend
 
-    steps: 
-      -name: Checkout Repository
+    steps:
+      - name: Checkout Repository
         uses: actions/checkout@v4
 
-      -name: Setup Node.js 
+      - name: Setup Node
         uses: actions/setup-node@v4
-        with: 
+        with:
           node-version: 22
 
-      -name: Install Dependencies
+      - name: Install Dependencies
         run: npm install
 
-      -name: Build Frontend
+      - name: Build Frontend
         run: npm run build
 
-    
-    backend: 
-      runs-on: ubuntu-latest
-      
-      defaults: 
-        run: 
-          working-directory: backend
-      
-      steps:
-        - name: Checkout Repository
-          uses: actions/checkout@v4
-        
-        - name: Setup Python
-          uses: actions/setup-python@v5
-          with: 
-            python-version: "3.12"
-        
-        - name: Install Dependencies
-          run: |
-            pip install -r requirements.txt
+  backend:
+    runs-on: ubuntu-latest
 
-        - name: Verify FastAPI Imports
-          run: |
-            python -c "from app.main import app"
+    defaults:
+      run:
+        working-directory: backend
 
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
 
-        
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
 
+      - name: Install Dependencies
+        run: |
+          pip install -r requirements.txt
+
+      - name: Verify FastAPI Imports
+        run: |
+          python -c "from app.main import app"
