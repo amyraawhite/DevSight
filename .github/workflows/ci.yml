@@ -36,15 +36,15 @@ jobs:
   backend:
     runs-on: ubuntu-latest
 
-    services: 
+    services:
       postgres:
         image: postgres:16
-        
-        env: 
+
+        env:
           POSTGRES_USER: devsight
           POSTGRES_PASSWORD: devsightpassword
           POSTGRES_DB: devsight
-        
+
         ports:
           - 5432:5432
 
@@ -64,6 +64,8 @@ jobs:
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Setup Python
         uses: actions/setup-python@v5
@@ -77,3 +79,22 @@ jobs:
       - name: Verify FastAPI Imports
         run: |
           python -c "from app.main import app"
+
+      # SonarQube analysis step
+      # NOTE:
+      # This requires SONAR_TOKEN and SONAR_HOST_URL
+      # GitHub repository secrets to be configured.
+      #
+      # If SonarQube is only running locally on localhost,
+      # GitHub Actions cannot reach it yet.
+      #
+      # You should enable this step only after:
+      # - deploying SonarQube publicly
+      # - exposing it through a tunnel
+      # - or using SonarCloud
+
+      # - name: SonarQube Scan
+      #   uses: SonarSource/sonarqube-scan-action@v6
+      #   env:
+      #     SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+      #     SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
