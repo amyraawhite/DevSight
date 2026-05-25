@@ -79,3 +79,19 @@ jobs:
       - name: Verify FastAPI Imports
         run: |
           python -c "from app.main import app"
+
+      - name: Install Security Tools
+        run: |
+          pip install ruff bandit safety
+
+      - name: Run Ruff
+        run: |
+          ruff check .
+
+      - name: Run Bandit
+        run: |
+          bandit -r app
+
+      - name: Run Safety
+        run: |
+          safety check
