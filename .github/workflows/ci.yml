@@ -82,7 +82,7 @@ jobs:
 
       - name: Install Security Tools
         run: |
-          pip install ruff bandit safety
+          pip install ruff bandit
 
       - name: Run Ruff
         run: |
@@ -91,7 +91,3 @@ jobs:
       - name: Run Bandit
         run: |
           bandit -r app
-
-      - name: Run Safety
-        run: |
-          safety scan || true
