@@ -2,12 +2,7 @@ name: DevSight CI
 
 on:
   push:
-    branches:
-      - main
-
   pull_request:
-    branches:
-      - main
 
 jobs:
 
@@ -55,7 +50,7 @@ jobs:
           --health-retries 5
 
     env:
-      DATABASE_URL: postgresql://devsight:${POSTGRES_PASSWORD}@localhost:5432/devsight
+      DATABASE_URL: postgresql://devsight:${{secrets.POSTGRES_PASSWORD}}@localhost:5432/devsight
 
     defaults:
       run:
@@ -82,7 +77,7 @@ jobs:
 
       - name: Install Security Tools
         run: |
-          pip install ruff bandit safety
+          pip install ruff bandit
 
       - name: Run Ruff
         run: |
@@ -91,7 +86,11 @@ jobs:
       - name: Run Bandit
         run: |
           bandit -r app
-
-      - name: Run Safety
+      
+      - name: Initialize Database Tables
         run: |
-          safety scan || true
+          python -c "from app.database import Base, engine; import app.models; Base.metadata.create_all(bind=engine)"
+          
+      - name: Run Backend Tests
+        run: |
+          pytest
