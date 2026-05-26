@@ -7,7 +7,7 @@ sys.path.append(
     )
 )
 
-from fastapi.testclient import TestClient
+
 
 # ===================
 # Registration Tests
