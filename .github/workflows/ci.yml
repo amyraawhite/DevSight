@@ -52,6 +52,10 @@ jobs:
     env:
       DATABASE_URL: postgresql://devsight:${{secrets.POSTGRES_PASSWORD}}@localhost:5432/devsight
       ACCESS_TOKEN_EXPIRE_MINUTES: 60
+      ALGORITHM: HS256
+      SECRET_KEY: devsightsecret
+      
+
     defaults:
       run:
         working-directory: backend
