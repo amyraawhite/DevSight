@@ -17,9 +17,12 @@ from .database import engine
 # Import SQLAlchemy base model metadata 
 from .models import Base
 
+# Import API routes from routers 
+from .routers import auth
+
 # create FastAPI application instance 
 app = FastAPI()
-
+app.include_router(auth.router)
 
 """
 Runs when the backend server starts.
@@ -48,3 +51,9 @@ def root():
     return {
         "message": "DevSight API Running"
     }
+
+@app.get("/health")
+def health():
+    return {"status": "healthy"}
+
+
