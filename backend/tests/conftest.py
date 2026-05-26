@@ -15,7 +15,6 @@ sys.path.append(
 
 from app.database import Base
 from app.main import app
-from app.database import SessionLocal
 from app.routers.auth import get_db
 
 from fastapi.testclient import TestClient
