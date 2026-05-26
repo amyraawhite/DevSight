@@ -81,6 +81,6 @@ def login(user : UserLogin, db : Session = Depends(get_db)):
     )
     return {
         "access_token" : str(token),
-        "token_type" : "bearer"
+        "token_type" : "bearer" # nosec B105
     }
     
