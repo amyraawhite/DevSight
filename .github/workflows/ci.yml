@@ -91,3 +91,7 @@ jobs:
       - name: Run Bandit
         run: |
           bandit -r app
+
+      - name: Run Backend Tests
+        run: |
+          pytest
