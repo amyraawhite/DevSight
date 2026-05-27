@@ -1,24 +1,11 @@
 import { useEffect, useState } from "react";
 import { getCurrentUser } from "../api/auth";
-import { useNavigate } from "react-router-dom";
-import { useAuth } from "../context/AuthContext";
 
 import StatCard from "../components/StatCard";
 import ContentCard from "../components/ContentCard";
 import SectionHeader from "../components/SectionHeader";
 
 function Dashboard() {
-    const navigate = useNavigate()
-    const { logout } = useAuth();
-
-    const [user, setUser] = useState<any>(null)
-    const [message, setMessage] = useState("")
-
-    const handleLogout = () => {
-        logout()
-        navigate("/login")
-    }
-
     useEffect(() => {
         const fetchUser = async () => {
             try {
