@@ -1,25 +1,38 @@
-import { useEffect, useState } from "react";
-import { getCurrentUser } from "../api/auth";
+// import { useEffect, useState } from "react";
+// import { getCurrentUser } from "../api/auth";
+// import { useNavigate } from "react-router-dom";
+// import { useAuth } from "../context/AuthContext";
 
 import StatCard from "../components/StatCard";
 import ContentCard from "../components/ContentCard";
 import SectionHeader from "../components/SectionHeader";
 
 function Dashboard() {
-    useEffect(() => {
-        const fetchUser = async () => {
-            try {
-                const response = await getCurrentUser();
+    // const navigate = useNavigate()
+    // const { logout } = useAuth();
 
-                setUser(response)
-            } catch (error) {
-                console.log(`Exception: Failed to load user -- ${error}`)
-                setMessage("Failed to load user.")
-            }
-        }
+    // const [user, setUser] = useState<any>(null)
+    // const [message, setMessage] = useState("")
 
-        fetchUser()
-    }, [])
+    // const handleLogout = () => {
+    //     logout()
+    //     navigate("/login")
+    // }
+
+    // useEffect(() => {
+    //     const fetchUser = async () => {
+    //         try {
+    //             const response = await getCurrentUser();
+
+    //             setUser(response)
+    //         } catch (error) {
+    //             console.log(`Exception: Failed to load user -- ${error}`)
+    //             setMessage("Failed to load user.")
+    //         }
+    //     }
+
+    //     fetchUser()
+    // }, [])
 
     return (
         <div>
