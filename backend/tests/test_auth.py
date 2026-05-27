@@ -88,8 +88,8 @@ def test_login_success(client):
 
     response = client.post(
         "/auth/login",
-        json={
-            "email" : "amyra@test.com",
+        data={
+            "username" : "amyra@test.com",
             "password" : "test123"
         }
     )
@@ -98,10 +98,19 @@ def test_login_success(client):
 
 
 def test_login_wrong_password(client):
+    client.post(
+        "/auth/register",
+        json={
+            "username" : "amyra",
+            "email" : "amyra@test.com",
+            "password" : "test123"
+        }
+    )
+
     response = client.post(
         "/auth/login",
-        json={
-            "email" : "amyra@test.com",
+        data={
+            "username" : "amyra@test.com",
             "password" : "wrong password"
         }
     )
@@ -111,8 +120,8 @@ def test_login_wrong_password(client):
 def test_login_invalid_user(client):
     response = client.post(
         "/auth/login",
-        json={
-            "email" : "notreal@test.com",
+        data={
+            "username" : "notreal@test.com",
             "password" : "wrong password"
         }
     )
@@ -120,23 +129,22 @@ def test_login_invalid_user(client):
     assert response.status_code == 400
 
 def test_login_missing_data(client):
-    response = client.post(
-        "/auth/login",
+    client.post(
+        "/auth/register",
         json={
-            "email" : "notreal@test.com",
-        }
-    )
-
-    assert response.status_code == 422
-
-
-def test_login_invalid_email(client):
-    response = client.post(
-        "/auth/login",
-        json={
-            "email" : "notreal@.com",
+            "username" : "amyra",
+            "email" : "amyra@test.com",
             "password" : "test123"
         }
     )
 
+    response = client.post(
+        "/auth/login",
+        data={
+            "username" : "amyra@test.com",
+        }
+    )
+
     assert response.status_code == 422
+
+

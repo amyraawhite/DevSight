@@ -20,9 +20,12 @@ from .models import Base
 # Import API routes from routers 
 from .routers import auth
 
+from .routers import users
+
 # create FastAPI application instance 
 app = FastAPI()
 app.include_router(auth.router)
+app.include_router(users.router)
 
 """
 Runs when the backend server starts.
@@ -55,5 +58,4 @@ def root():
 @app.get("/health")
 def health():
     return {"status": "healthy"}
-
 
