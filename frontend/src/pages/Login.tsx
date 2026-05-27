@@ -1,4 +1,6 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom"
+import { useAuth } from "../context/AuthContext";
 
 import AuthLayout from "../layouts/AuthLayout";
 
@@ -6,7 +8,9 @@ import { loginUser } from "../api/auth";
 import { Link } from "react-router-dom";
 
 function Login() {
-
+    const navigate = useNavigate()
+    const { login } = useAuth();
+    
     const [email, setEmail] = useState("");
 
     const [password, setPassword] = useState("");
@@ -25,10 +29,10 @@ function Login() {
                 email,
                 password
             );
+            
+            login(response.access_token)
 
-            console.log(response);
-
-            setMessage("Login successful.");
+            navigate("/dashboard");
 
         } catch (error: any) {
 
@@ -40,7 +44,7 @@ function Login() {
     };
 
     return (
-
+        
         <AuthLayout>
 
             <div className="flex flex-col items-center mb-8">
