@@ -1,30 +1,20 @@
 from fastapi import APIRouter
 from fastapi import Depends
 from fastapi import HTTPException
+from fastapi.security import OAuth2PasswordRequestForm
 
 from sqlalchemy.orm import Session
 
-from ..database import SessionLocal
+from ..database import get_db
 from ..models import User
 from ..schemas import UserCreate
 
-from ..auth import hash_password
+from ..auth import hash_password, verify_password, create_access_token
 
 router = APIRouter(
     prefix="/auth",
     tags=["Authentication"]
 )
-
-# =========================
-# Database Dependency
-# =========================
-def get_db():
-    db = SessionLocal()
-
-    try:
-        yield db
-    finally: 
-        db.close()
 
 # =========================
 # Register Endpoint
@@ -51,6 +41,50 @@ def register(user : UserCreate, db : Session = Depends(get_db)):
 
     db.add(new_user)
     db.commit()
+
+    print(f"REGISTER DB ID: {id(db)}")
+
+    users = db.query(User).all()
+    print(f"USERS AFTER REGISTER: {users}")
+
     db.refresh(new_user)
 
     return {"message" : "User registered successfully"}
+
+@router.post("/login")
+def login(
+    form_data: OAuth2PasswordRequestForm = Depends(),
+    db: Session = Depends(get_db)
+):
+
+    existing_user = db.query(User).filter(
+        User.email == form_data.username
+    ).first()
+
+    if not existing_user:
+
+        raise HTTPException(
+            status_code=400,
+            detail="User not found."
+        )
+
+    if not verify_password(
+        form_data.password,
+        existing_user.hashed_password
+    ):
+
+        raise HTTPException(
+            status_code=400,
+            detail="Incorrect password."
+        )
+
+    token = create_access_token(
+        data={
+            "sub": existing_user.email
+        }
+    )
+
+    return {
+        "access_token": token,
+        "token_type": "bearer"  # nosec B105
+    }

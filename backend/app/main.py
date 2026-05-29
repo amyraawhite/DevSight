@@ -20,9 +20,28 @@ from .models import Base
 # Import API routes from routers 
 from .routers import auth
 
+from .routers import users
+
+from .routers import projects
+
+from .routers import tasks
+
+from fastapi.middleware.cors import CORSMiddleware
+
 # create FastAPI application instance 
 app = FastAPI()
 app.include_router(auth.router)
+app.include_router(users.router)
+app.include_router(projects.router)
+app.include_router(tasks.router)
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:5173"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"]
+)
 
 """
 Runs when the backend server starts.
@@ -55,5 +74,4 @@ def root():
 @app.get("/health")
 def health():
     return {"status": "healthy"}
-
 

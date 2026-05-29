@@ -5,7 +5,11 @@ These python classes map directly to PostgreSQL database tables
 """
 
 # SLQAlchemy coln/data types 
-from sqlalchemy import Column, Integer, String
+from sqlalchemy import Column, Integer, String, DateTime, ForeignKey
+from sqlalchemy.orm import relationship
+
+
+from datetime import datetime, timezone
 
 # Import ORM base class 
 from .database import Base 
@@ -42,3 +46,53 @@ class User(Base):
     Stores hashed password. 
     """
     hashed_password = Column(String)
+
+    projects = relationship(
+        "Project",
+        back_populates="owner"
+    )
+
+
+class Project(Base): 
+    __tablename__ = "projects"
+
+    id = Column(Integer, primary_key=True, index=True)
+
+    name = Column(String, index=True)
+
+    description = Column(String)
+
+    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
+
+    owner_id = Column(Integer, ForeignKey("users.id"))
+
+    owner = relationship(
+        "User",
+        back_populates="projects"
+    )
+
+    tasks = relationship(
+        "Task",
+        back_populates="project",
+        cascade="all, delete-orphan" # deletes tasks assocaited with project upon project deletion
+    )
+
+class Task(Base): 
+    __tablename__ = "tasks"
+
+    id = Column(Integer, primary_key=True, index=True)
+    title = Column(String, index=True)
+    description = Column(String)
+    status = Column(String)
+    priority = Column(String)
+    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
+
+    project_id = Column(
+        Integer,
+        ForeignKey("projects.id")
+    )
+
+    project = relationship(
+        "Project",
+        back_populates="tasks"
+    )
