@@ -372,7 +372,7 @@ def test_patch_task_no_jwt(client):
 
     assert response.status_code == 401
 
-def test_patch_task_no_jwt(client):
+def test_delete_task_no_jwt(client):
     token, project_id = get_auth_token(client)
 
     response = client.post(

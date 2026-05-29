@@ -9,7 +9,7 @@ from ..models import Task, Project
 from ..database import get_db
 
 from ..schemas import ProjectCreate, ProjectUpdate, ProjectResponse
-from ..schemas import TaskCreate, TaskResponse, TaskUpdate
+from ..schemas import TaskCreate, TaskResponse
 
 router = APIRouter(
     prefix="/projects",
