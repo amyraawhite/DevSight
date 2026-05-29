@@ -71,3 +71,28 @@ class Project(Base):
         back_populates="projects"
     )
 
+    tasks = relationship(
+        "Task",
+        back_populates="project",
+        cascade="all, delete-orphan" # deletes tasks assocaited with project upon project deletion
+    )
+
+class Task(Base): 
+    __tablename__ = "tasks"
+
+    id = Column(Integer, primary_key=True, index=True)
+    title = Column(String, index=True)
+    description = Column(String)
+    status = Column(String)
+    priority = Column(String)
+    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
+
+    project_id = Column(
+        Integer,
+        ForeignKey("projects.id")
+    )
+
+    project = relationship(
+        "Project",
+        back_populates="tasks"
+    )

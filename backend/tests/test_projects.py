@@ -16,7 +16,7 @@ def get_auth_token(client):
             "password" : "test123"
         }
     )
-    print(register_response.json())
+    
     assert register_response.status_code == 200
 
     # Login
@@ -27,7 +27,7 @@ def get_auth_token(client):
             "password" : "test123"
         }
     )
-    print(login_response.json())
+
 
     assert login_response.status_code == 200
 
@@ -504,3 +504,52 @@ def test_delete_project_not_owner(client):
 
     assert update_response.status_code == 404
 
+def test_get_project_task_not_owner(client):
+    user_b = client.post(
+        "/auth/register",
+        json={
+            "username" : "user1",
+            "email" : "user2@example.com",
+            "password" : "password"
+        }
+    )
+
+    assert user_b.status_code == 200
+
+    user_b = client.post(
+        "/auth/login",
+        data={
+            "username" : "user2@example.com",
+            "password" : "password"
+        }
+    )
+
+    assert user_b.status_code == 200
+
+    user_b_token = user_b.json()["access_token"]
+
+    token = get_auth_token(client)
+
+    project = client.post(
+        "/projects",
+        json={
+            "name" : "DevSight",
+            "description" : "Security Monitoring Platform"
+        },
+        headers={
+            "Authorization" : f"Bearer {token}"
+        }
+    )
+
+    assert project.status_code == 200
+
+    project_id = project.json()["id"]
+
+    response = client.get(
+    f"/projects/{project_id}/tasks",
+        headers={
+            "Authorization": f"Bearer {user_b_token}"
+        }
+    )
+
+    assert response.status_code == 404 

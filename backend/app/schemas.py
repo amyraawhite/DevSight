@@ -24,11 +24,11 @@ class UserResponse(BaseModel):
     email : EmailStr
 
     model_config = {
-        "from_attribute" : True 
+        "from_attributes" : True 
     }
 
 # =========================
-# Project Create Schema
+# Project Schemas
 # =========================
 class ProjectCreate(BaseModel): 
     name : str
@@ -42,12 +42,41 @@ class ProjectResponse(BaseModel):
     owner_id : int 
 
     model_config = {
-        "from_attribute" : True 
+        "from_attributes" : True 
     }
 
 class ProjectUpdate(BaseModel):
     name : str | None = None
     description : str | None = None 
+
+# =========================
+# Task Schemas
+# =========================
+class TaskCreate(BaseModel): 
+    title : str
+    description : str
+    status : str
+    priority : str
+
+class TaskResponse(BaseModel): 
+    id : int
+    title : str
+    description : str
+    status : str
+    priority : str
+    created_at : datetime
+    project_id : int
+
+    model_config = {
+        "from_attributes" : True 
+    }
+
+
+class TaskUpdate(BaseModel): 
+    title : str | None = None
+    description : str | None = None
+    status : str | None = None
+    priority : str  | None = None
 
 # =========================
 # User Token Schema

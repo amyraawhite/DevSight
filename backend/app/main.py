@@ -24,6 +24,8 @@ from .routers import users
 
 from .routers import projects
 
+from .routers import tasks
+
 from fastapi.middleware.cors import CORSMiddleware
 
 # create FastAPI application instance 
@@ -31,6 +33,7 @@ app = FastAPI()
 app.include_router(auth.router)
 app.include_router(users.router)
 app.include_router(projects.router)
+app.include_router(tasks.router)
 
 app.add_middleware(
     CORSMiddleware,
