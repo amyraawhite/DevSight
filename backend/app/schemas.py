@@ -1,5 +1,5 @@
 from pydantic import BaseModel, EmailStr
-
+from datetime import datetime
 # =========================
 # User Registration Schema
 # =========================
@@ -23,8 +23,27 @@ class UserResponse(BaseModel):
     username : str
     email : EmailStr
 
-    class Config: 
-        from_attributes = True
+    model_config = {
+        "from_attribute" : True 
+    }
+
+# =========================
+# Project Create Schema
+# =========================
+class ProjectCreate(BaseModel): 
+    name : str
+    description : str
+
+class ProjectResponse(BaseModel): 
+    id : int
+    name : str
+    description : str
+    created_at: datetime
+    owner_id : int 
+
+    model_config = {
+        "from_attribute" : True 
+    }
 
 # =========================
 # User Token Schema

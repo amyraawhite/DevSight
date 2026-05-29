@@ -22,12 +22,15 @@ from .routers import auth
 
 from .routers import users
 
+from .routers import projects
+
 from fastapi.middleware.cors import CORSMiddleware
 
 # create FastAPI application instance 
 app = FastAPI()
 app.include_router(auth.router)
 app.include_router(users.router)
+app.include_router(projects.router)
 
 app.add_middleware(
     CORSMiddleware,

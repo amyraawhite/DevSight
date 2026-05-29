@@ -10,7 +10,7 @@ from dotenv import load_dotenv
 
 from sqlalchemy.orm import Session
 
-from .database import SessionLocal
+from .database import get_db
 from .models import User
 # =========================
 # JWT Configuration
@@ -47,18 +47,6 @@ def hash_password(password : str):
 def verify_password(plain_password : str, hashed_password : str): 
     return pwd_context.verify(plain_password, hashed_password)
 
-# =========================
-# Database Dependency
-# =========================
-def get_db():
-
-    db = SessionLocal()
-
-    try:
-        yield db
-
-    finally:
-        db.close()
 
 # =========================
 # Create JWT Access Token
@@ -96,19 +84,32 @@ def get_current_user(token : str = Depends(oauth2_scheme), db : Session = Depend
             algorithms=[ALGORITHM]
         )
 
+        print(f"PAYLOAD: {payload}")
+
         email = payload.get("sub")
+
+        print(f"EMAIL: {email}")
 
         if email is None: 
             raise credentials_exception
         
-    except JWTError: 
+    except JWTError as e: 
+        print(f"JWT ERROR: {e}")
         raise credentials_exception
+
+    print(f"DB ID: {id(db)}")
+
+    users = db.query(User).all()
+    print(f"ALL USERS: {users}")
 
     user = db.query(User).filter(
         User.email == email
     ).first()
 
+    print(f"USER: {user}")
+
     if user is None: 
         raise credentials_exception
     
+
     return user

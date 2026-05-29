@@ -5,7 +5,7 @@ from fastapi.security import OAuth2PasswordRequestForm
 
 from sqlalchemy.orm import Session
 
-from ..database import SessionLocal
+from ..database import get_db
 from ..models import User
 from ..schemas import UserCreate
 
@@ -15,17 +15,6 @@ router = APIRouter(
     prefix="/auth",
     tags=["Authentication"]
 )
-
-# =========================
-# Database Dependency
-# =========================
-def get_db():
-    db = SessionLocal()
-
-    try:
-        yield db
-    finally: 
-        db.close()
 
 # =========================
 # Register Endpoint
@@ -52,6 +41,12 @@ def register(user : UserCreate, db : Session = Depends(get_db)):
 
     db.add(new_user)
     db.commit()
+
+    print(f"REGISTER DB ID: {id(db)}")
+
+    users = db.query(User).all()
+    print(f"USERS AFTER REGISTER: {users}")
+
     db.refresh(new_user)
 
     return {"message" : "User registered successfully"}
