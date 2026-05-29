@@ -45,6 +45,10 @@ class ProjectResponse(BaseModel):
         "from_attribute" : True 
     }
 
+class ProjectUpdate(BaseModel):
+    name : str | None = None
+    description : str | None = None 
+
 # =========================
 # User Token Schema
 # =========================

@@ -39,6 +39,8 @@ def get_auth_token(client):
 # ===================
 # Project Tests
 # ===================
+
+# Post Routes
 def test_create_and_get_project_success(client):
     token = get_auth_token(client)
 
@@ -124,6 +126,7 @@ def test_no_jwt_project_create(client):
 
     assert response.status_code == 401
 
+# get routes
 def test_no_jwt_project_get(client):
     response = client.get(
         "/projects",
@@ -149,7 +152,6 @@ def test_project_id_get_fail(client):
     )
 
     assert response.status_code == 404
-
 
 def test_project_ownership(client): 
     user_a_token = get_auth_token(client)
@@ -202,4 +204,303 @@ def test_project_ownership(client):
     )
 
     assert project_response.status_code == 404
+
+# patch routes 
+def test_update_project_success(client): 
+    token = get_auth_token(client)
+
+    project_response = client.post(
+        "/projects",
+        json={
+            "name" : "DevSight",
+            "description" : "Security platform"
+        },
+        headers = {
+            "Authorization" : f"Bearer {token}"
+        }
+    )
+
+    assert project_response.status_code == 200
+
+    project_id = project_response.json()["id"]
+
+    update_response = client.patch(
+        f"/projects/{project_id}",
+        json={
+            "name" : "DevSight V2"
+        },
+        headers = {
+            "Authorization" : f"Bearer {token}"
+        }
+    )
+
+    assert update_response.status_code == 200
+
+    update_response = client.patch(
+        f"/projects/{project_id}",
+        json={
+            "description" : "Upgrade Security platform"
+        },
+        headers = {
+            "Authorization" : f"Bearer {token}"
+        }
+    )
+
+    assert update_response.status_code == 200
+
+    update_response = client.patch(
+        f"/projects/{project_id}",
+        json={
+            "name" : "DevSight V3",
+            "description": "Highest level of security"
+        },
+        headers = {
+            "Authorization" : f"Bearer {token}"
+        }
+    )
+
+    assert update_response.status_code == 200
+
+def test_update_project_invalid_id(client):
+    token = get_auth_token(client)
+
+    update_response = client.patch(
+        "/projects/9000",
+        json={
+            "name" : "DevSight V2"
+        },
+        headers = {
+            "Authorization" : f"Bearer {token}"
+        }
+    )
+
+    assert update_response.status_code == 404
+
+def test_update_project_duplicate_name(client): 
+    token = get_auth_token(client)
+
+    project_a_response = client.post(
+        "/projects",
+        json={
+            "name" : "DevSight",
+            "description" : "Security platform"
+        },
+        headers = {
+            "Authorization" : f"Bearer {token}"
+        }
+    )
+
+    assert project_a_response.status_code == 200
+
+    project_b_response = client.post(
+        "/projects",
+        json={
+            "name" : "DevSight V2",
+            "description" : "Better security platform"
+        },
+        headers = {
+            "Authorization" : f"Bearer {token}"
+        }
+    )
+
+
+    assert project_b_response.status_code == 200
+
+    project_id = project_a_response.json()["id"]
+    update_response = client.patch(
+        f"/projects/{project_id}",
+        json={
+            "name" : "DevSight V2"
+        },
+        headers = {
+            "Authorization" : f"Bearer {token}"
+        }
+    )
+
+    assert update_response.status_code == 400
+
+def test_update_project_no_jwt(client): 
+    token = get_auth_token(client)
+
+    project_response = client.post(
+        "/projects",
+        json={
+            "name" : "DevSight",
+            "description" : "Security platform"
+        },
+        headers = {
+            "Authorization" : f"Bearer {token}"
+        }
+    )
+    assert project_response.status_code == 200
+    project_id = project_response.json()["id"]
+
+    response = client.patch(
+        f"/projects/{project_id}",
+        json={
+            "name" : "DevSight V2"
+        }
+    )
+
+    assert response.status_code == 401
+
+def test_update_project_not_owner(client): 
+    token_a = get_auth_token(client)
+
+    project_response = client.post(
+        "/projects",
+        json={
+            "name" : "DevSight",
+            "description" : "Security platform"
+        },
+        headers = {
+            "Authorization" : f"Bearer {token_a}"
+        }
+    )
+    assert project_response.status_code == 200
+    project_id = project_response.json()["id"]
+
+    user_b = client.post(
+        "/auth/register",
+        json={
+            "username" : "user2",
+            "email" : "user2@example.com",
+            "password" : "password"
+        }
+    )
+
+    assert user_b.status_code == 200
+
+    user_b = client.post(
+        "/auth/login",
+        data={
+            "username" : "user2@example.com",
+            "password" : "password"
+        }
+    )
+
+    assert user_b.status_code == 200
+
+    user_b_token = user_b.json()["access_token"]
+
+    update_response = client.patch(
+        f"/projects/{project_id}",
+        json={
+            "name" : "DevSight V2"
+        }, 
+        headers={
+            "Authorization" : f"Bearer {user_b_token}"
+        }
+    )
+
+    assert update_response.status_code == 404
+
+# delete routes
+def test_delete_project_success(client): 
+    token = get_auth_token(client)
+
+    project_response = client.post(
+        "/projects",
+        json = {
+            "name" : "DevSight",
+            "description" : "Security Monitoring Platform"
+        },
+        headers = {
+            "Authorization" : f"Bearer {token}"
+        }
+    )
+
+    assert project_response.status_code == 200
+
+    project_id = project_response.json()["id"]
+    delete_response = client.delete(
+        f"/projects/{project_id}",
+        headers={
+            "Authorization" : f"Bearer {token}"
+        }
+    )
+
+    assert delete_response.status_code == 200
+
+def test_delete_project_invalid_id(client):
+    token = get_auth_token(client)
+
+    delete_response = client.delete(
+        "/projects/9000",
+        headers={
+            "Authorization" : f"Bearer {token}"
+        }
+    )
+
+    assert delete_response.status_code == 404
+
+def test_delete_project_no_jwt(client): 
+    token = get_auth_token(client)
+
+    project_response = client.post(
+        "/projects",
+        json={
+            "name" : "DevSight",
+            "description" : "Security platform"
+        },
+        headers = {
+            "Authorization" : f"Bearer {token}"
+        }
+    )
+    assert project_response.status_code == 200
+    project_id = project_response.json()["id"]
+
+    response = client.delete(
+        f"/projects/{project_id}",
+    )
+
+    assert response.status_code == 401
+
+def test_delete_project_not_owner(client): 
+    token_a = get_auth_token(client)
+
+    project_response = client.post(
+        "/projects",
+        json={
+            "name" : "DevSight",
+            "description" : "Security platform"
+        },
+        headers = {
+            "Authorization" : f"Bearer {token_a}"
+        }
+    )
+    assert project_response.status_code == 200
+    project_id = project_response.json()["id"]
+
+    user_b = client.post(
+        "/auth/register",
+        json={
+            "username" : "user1",
+            "email" : "user2@example.com",
+            "password" : "password"
+        }
+    )
+
+    assert user_b.status_code == 200
+
+    user_b = client.post(
+        "/auth/login",
+        data={
+            "username" : "user2@example.com",
+            "password" : "password"
+        }
+    )
+
+    assert user_b.status_code == 200
+
+    user_b_token = user_b.json()["access_token"]
+
+    update_response = client.delete(
+        f"/projects/{project_id}",
+        headers={
+            "Authorization" : f"Bearer {user_b_token}"
+        }
+    )
+
+    assert update_response.status_code == 404
 
